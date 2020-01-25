@@ -49,7 +49,7 @@
       <button type="button" v-on:click="send_message()">Send</button>
     </div>
 
-
+    <RadioSignalStrength/>
 
   </div>
 </template>
@@ -58,6 +58,8 @@
   import LCMBridge from 'lcm_bridge_client/dist/bridge.js';
   import CommIndicator from './CommIndicator.vue'
   import msgs from '../static/rover_msgs.json'
+
+  import RadioSignalStrength from './RadioSignalStrength.vue'
 
   export default {
     name: 'LCMSend',
@@ -75,11 +77,26 @@
         message_text: "",
         options: [],
         selectedOption: '',
-        commandParams: []
+        commandParams: [],
+        subscriptions: [
+          {'topic': '/radio', 'type': 'RadioMessage'}
+        ],
       }
     },
 
     methods: {
+      
+      publish: function (channel, payload) {
+        this.lcm_.publish(channel, payload)
+      },
+
+      subscribe: function (channel, callbackFn) {
+        if( (typeof callbackFn !== "function") || (callbackFn.length !== 1)) {
+          console.error("Callback Function is invalid (should take 1 parameter)")
+        }
+        this.lcm_.subscribe(channel, callbackFn)
+      },
+      
       send_message: function () {
 
         var msg = {type: this.selectedOption};
@@ -163,19 +180,14 @@
           this.connections.lcm = online[0]
         },
         // Subscribed LCM message received
-        (msg) => {
-          if (this.viewing[msg.topic]){
-            this.updateScroll()
-            this.messages.push(msg.message)
-            this.messages = this.messages.slice(-100)
-          }
-        },
+        (msg) => {},
         // Subscriptions
         this.subscriptions
       )
     },
     components: {
-      CommIndicator
+      CommIndicator,
+      RadioSignalStrength
     }
   }
 </script>
