@@ -6,7 +6,7 @@ from rover_common.aiohelper import run_coroutines
 import os
 import re
 
-from rover_msgs import RadioMessage
+from rover_msgs import RadioSignalStrength
 
 # Define constants
 WAIT_SECONDS = 9
@@ -52,7 +52,7 @@ def run_radio_setup_callback(channel, msg):
                                          -4,
                                          "station"
                                          )
-    cmd = os.path.join(SCRIPTS_DIR, "radio_setup.tcl " + args)
+    cmd = os.path.join(SCRIPTS_DIR, "radio_setup.tcl") + " " + args
     os.system(cmd)
 
 
@@ -67,10 +67,13 @@ async def send_sig_strength_loop():
         print("Connecting to radio...")
 
         # Run expect script with arguments [radio username] [password] [ip]
-        cmd = "signal_strength.tcl {} {} {}".format(RADIO_USERNAME,
-                                                    RADIO_PWD,
-                                                    RADIO_IP)
-        stream = os.popen(os.path.join(SCRIPTS_DIR, cmd))
+
+        cmd = "{} {} {} {}".format(os.path.join(SCRIPTS_DIR, "signal_strength.tcl"),
+                                   RADIO_USERNAME,
+                                   RADIO_PWD,
+                                   RADIO_IP)
+        print("Command", cmd)
+        stream = os.popen(cmd)
 
         # Read the output from the scp command
         # The command runs grep for the line containing signal strength
@@ -79,8 +82,11 @@ async def send_sig_strength_loop():
 
         msg_content = extractSignalStrength(msg_content)
 
+        # Convert to integer
+        msg_content = int(msg_content)
+
         # Create RadioMessage object and send over LCM
-        message = RadioMessage()
+        message = RadioSignalStrength()
         message.signal_strength = msg_content
         lcm_.publish(UPDATE_CHANNEL, message.encode())
 

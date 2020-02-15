@@ -55,6 +55,10 @@ expect {
         # Wait for end of scp file to arrive
         expect eof
     }
+    # Send yes if sees a "Are you sure you want to continue connecting (yes/no)?"
+    "yes/no" {
+        send "yes\r"
+    }
     timeout {
         # Python script checks for this message
         # If you change this message here, change it in the script as well

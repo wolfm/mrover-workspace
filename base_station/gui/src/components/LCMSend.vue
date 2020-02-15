@@ -49,8 +49,6 @@
       <button type="button" v-on:click="send_message()">Send</button>
     </div>
 
-
-
   </div>
 </template>
 
@@ -87,7 +85,7 @@
         for(var i = 0; i < this.commandParams.length; ++i) {
           var param = this.commandParams[i];
 
-          //Convert to boolean, 
+          //Convert to boolean,
           if(param.type == "boolean") {
             if(param.value.toLowerCase() == "true") {
               msg[param.label] = true;
@@ -107,7 +105,7 @@
           else if(param.type == "double" || param.type == "float" || param.type.startsWith("int")) {
             msg[param.label] = Number(param.value);
           }
-
+          
           //leave as string
           else if(param.type == "string") {
             msg[param.label] = param.value;
@@ -136,7 +134,19 @@
         //Populate commandParams arary
         for(var i = 0; i < msgs[this.selectedOption].length; ++i)
         {
-          this.commandParams.push({ type: msgs[this.selectedOption][i][0], label: msgs[this.selectedOption][i][1] });
+          
+          // Regex for brackets and number between them
+          let array_pattern = /\[([0-9]*)\]/
+
+          // If an array
+          if(msgs[this.selectedOption] ) {
+
+          }
+          // If a non-array
+          else {
+            this.commandParams.push({ type: msgs[this.selectedOption][i][0], label: msgs[this.selectedOption][i][1] });
+          }
+          
         }
       },
 

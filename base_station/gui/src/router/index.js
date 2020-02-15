@@ -8,6 +8,7 @@ import LCMEcho from '../components/LCMEcho.vue'
 import SATask from '../components/SATask.vue'
 import ESCTest from '../components/ESCTest.vue'
 import LCMSend from '../components/LCMSend.vue'
+import Comms from '../components/Comms.vue'
 
 Vue.use(Router)
 
@@ -52,6 +53,11 @@ export default new Router({
       path: '/LCMSend',
       name: 'LCMSend',
       component: LCMSend
+    },
+    {
+      path: '/Comms',
+      name: 'Comms',
+      component: Comms
     }
   ]
 })
